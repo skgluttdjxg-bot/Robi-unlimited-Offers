@@ -1,0 +1,324 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robi আনলিমিটেড ইন্টারনেট প্যাকেজ</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Noto Sans Bengali", "Segoe UI", Tahoma, sans-serif;
+      background: #101010; color: #f5f5f5; line-height: 1.5; padding: 0;
+    }
+    /* ব্যানার ইমেজ এক পাশ থেকে অন্য পাশ জুড়ে থাকবে */
+    .top-banner-container {
+      width: 100%;
+      background: #000;
+      line-height: 0;
+      margin-bottom: 14px;
+    }
+    .top-banner-img {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .container { max-width: 800px; margin: 0 auto; padding: 0 14px 14px 14px; }
+    
+    .offer-banner {
+      background: #ff4444; color: white; padding: 10px 14px; border-radius: 8px;
+      text-align: center; font-weight: 700; font-size: 0.9rem; margin-bottom: 18px;
+    }
+    
+    /* ছোট চারকোনা প্যাকেজ বক্স পাশাপাশি */
+    .packages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .package-card {
+      background: #1a1a1a; border: 1px solid #383838; border-radius: 10px;
+      padding: 12px 8px; cursor: pointer; transition: .2s ease; text-align: center;
+    }
+    .package-card:hover, .package-card.selected {
+      border-color: #ff4444; box-shadow: 0 0 0 2px #ff444422; transform: translateY(-2px);
+      background: #221414;
+    }
+    .package-card h2 { font-size: 0.95rem; margin-bottom: 4px; }
+    .price { color: #ff5555; font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+    .features p { color: #bbb; font-size: 0.78rem; margin: 2px 0; }
+    .deadline { color: #ffb0b0; font-size: 0.75rem; margin-top: 6px; }
+
+    .order-section {
+      background: #1a1a1a; border: 1px solid #383838; border-radius: 12px;
+      padding: 18px; margin-top: 18px;
+    }
+    .order-section h2 { font-size: 1.1rem; margin-bottom: 12px; }
+    .selected-package-info {
+      background: #242424; padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; text-align: center;
+    }
+    .muted { color: #aaa; font-size: 0.88rem; }
+    .form-group { margin: 14px 0; }
+    label, .payment-label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.9rem; }
+    
+    /* পার্মানেন্ট স্থির নম্বর ইনপুট - কালো রঙের টেক্সট */
+    input[type="tel"], input[type="text"] {
+      width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #555;
+      background: #101010; color: #fff; font: inherit; outline: none; font-size: 0.95rem;
+    }
+    input[readonly] {
+      background: #f0f0f0; color: #000000 !important; font-weight: 700; border-color: #888; cursor: not-allowed;
+    }
+    input:focus:not([readonly]) { border-color: #ff4444; }
+
+    /* বিকাশ ও নগদ ছোট চারকোনা পাশাপাশি */
+    .payment-methods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+    .payment-option {
+      border: 1px solid #444; border-radius: 8px; padding: 10px; cursor: pointer;
+      background: #151515; text-align: center; transition: .2s ease;
+    }
+    .payment-option:hover { border-color: #777; }
+    .payment-option.selected { border-color: #ff4444; background: #2a1717; }
+    .payment-title { font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .payment-logo { width: 22px; height: 22px; object-fit: contain; border-radius: 3px; }
+
+    /* পেমেন্ট নম্বর ও সেন্ড মানি নির্দেশনা বক্স (ডিফল্টভাবে হাইড করা) */
+    .payment-details-box {
+      display: none;
+      background: #222; border: 1px dashed #ff4444; border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 14px;
+      animation: fadeIn 0.3s ease;
+    }
+    .payment-details-box.show { display: block; }
+    .pay-instruction { font-weight: 700; color: #ffbb00; margin-bottom: 6px; font-size: 0.9rem; }
+    .number-display { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 4px; }
+    .pay-number { font-weight: 800; font-size: 1.1rem; letter-spacing: .5px; color: #fff; }
+
+    button {
+      border: 0; border-radius: 6px; padding: 8px 12px; font: inherit;
+      font-weight: 700; cursor: pointer; font-size: 0.85rem;
+    }
+    .copy-btn { background: #333; color: white; border: 1px solid #555; }
+    .copy-btn:hover { background: #444; }
+    .submit-btn { width: 100%; background: #ff4444; color: white; padding: 11px; margin-top: 8px; font-size: 1rem; }
+    .submit-btn:hover { background: #e83232; }
+
+    .copy-notification {
+      display: none; position: fixed; right: 20px; bottom: 20px; z-index: 1000;
+      background: #ff4444; color: white; padding: 10px 16px; border-radius: 6px;
+      font-weight: 700; font-size: 0.88rem;
+    }
+    .copy-notification.show { display: block; animation: slideIn .25s ease; }
+    .success-message {
+      display: none; background: #287d3c; color: white; padding: 14px;
+      border-radius: 8px; margin-top: 14px; text-align: center; line-height: 1.6; font-size: 0.9rem;
+    }
+    .success-message.show { display: block; }
+    
+    @keyframes slideIn { from { transform: translateY(15px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 480px) {
+      .packages { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .package-card { padding: 8px 4px; }
+      .package-card h2 { font-size: 0.8rem; }
+      .price { font-size: 1rem; }
+      .features p { font-size: 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- সবার উপরে ফুল-উইডথ ব্যানার ইমেজ -->
+  <div class="top-banner-container">
+    <img src="IMG_20261027_121650.png" alt="Robi Unlimited Internet Banner" class="top-banner-img">
+  </div>
+
+  <main class="container">
+    <div class="offer-banner">⏰ সীমিত সময়ের অফার — অফারটি শেষ হওয়ার আগে অর্ডার করুন</div>
+
+    <!-- ছোট চারকোনা প্যাকেজ বক্স (পাশাপাশি) -->
+    <section class="packages" aria-label="ইন্টারনেট প্যাকেজ">
+      <div class="package-card" data-index="0" onclick="selectPackage(0)">
+        <h2>৩ মাস</h2>
+        <div class="price">৳৮৪৯</div>
+        <div class="features">
+          <p>✓ আনলিমিটেড</p>
+          <p>✓ ৩ মাস মেয়াদ</p>
+        </div>
+        <p class="deadline">সীমিত সময়</p>
+      </div>
+
+      <div class="package-card" data-index="1" onclick="selectPackage(1)">
+        <h2>৬ মাস</h2>
+        <div class="price">৳১২৬০</div>
+        <div class="features">
+          <p>✓ আনলিমিটেড</p>
+          <p>✓ ৬ মাস মেয়াদ</p>
+        </div>
+        <p class="deadline">সীমিত সময়</p>
+      </div>
+
+      <div class="package-card" data-index="2" onclick="selectPackage(2)">
+        <h2>১ বছর</h2>
+        <div class="price">৳১৫৬৯</div>
+        <div class="features">
+          <p>✓ আনলিমিটেড</p>
+          <p>✓ ১ বছর মেয়াদ</p>
+        </div>
+        <p class="deadline">সীমিত সময়</p>
+      </div>
+    </section>
+
+    <section class="order-section" id="orderSection">
+      <h2>📝 আপনার অর্ডার</h2>
+      <div class="selected-package-info">
+        <p class="muted">নির্বাচিত প্যাকেজ:</p>
+        <h3 id="packageName" style="font-size: 1.1rem; color: #ff5555;">কোনো প্যাকেজ নির্বাচিত নয়</h3>
+        <div class="price" id="packagePrice" style="margin-bottom:0;">৳০</div>
+      </div>
+
+      <!-- পার্মানেন্ট স্থির রবি নম্বর ইনপুট বক্স (কালো রঙের লেখা) -->
+      <div class="form-group">
+        <label for="phoneNumber">📱 আপনার রবি নম্বর</label>
+        <input type="tel" id="phoneNumber" value="01810028480" readonly title="এই নম্বরটি পরিবর্তনযোগ্য নয়">
+      </div>
+
+      <!-- বিকাশ ও নগদ পাশাপাশি ছোট চারকোনা অপশন -->
+      <label class="payment-label">💳 পেমেন্ট পদ্ধতি নির্বাচন করুন</label>
+      <div class="payment-methods">
+        <div class="payment-option" id="bkashOption" onclick="selectPaymentMethod('bkash')">
+          <div class="payment-title">
+            <img src="images (2).png" alt="bKash Logo" class="payment-logo"> বিকাশ
+          </div>
+        </div>
+        <div class="payment-option" id="nagadOption" onclick="selectPaymentMethod('nagad')">
+          <div class="payment-title">
+            <img src="2057_4-78566033-icon.jpg" alt="Nagad Logo" class="payment-logo"> নগদ
+          </div>
+        </div>
+      </div>
+
+      <!-- পেমেন্ট নম্বর ও সেন্ড মানি সংক্রান্ত ডাইনামিক বক্স (ক্লিক করলে ওপেন হবে) -->
+      <div class="payment-details-box" id="paymentDetailsBox">
+        <div class="pay-instruction" id="payInstruction"></div>
+        <div class="number-display">
+          <span class="pay-number" id="currentPayNumber"></span>
+          <button class="copy-btn" type="button" onclick="copyCurrentNumber(event)">কপি করুন</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="transactionId">🔐 ট্রানজেকশন আইডি / রেফারেন্স নাম্বার</label>
+        <input type="text" id="transactionId" placeholder="Transaction ID লিখুন" autocomplete="off">
+        <p class="muted" style="margin-top: 4px;">পেমেন্ট করার পর আপনার Transaction ID এখানে জমা দিন।</p>
+      </div>
+
+      <button class="submit-btn" type="button" onclick="submitOrder()">অর্ডার জমা দিন</button>
+      <div class="success-message" id="successMessage"></div>
+      <p class="muted" style="margin-top:10px; text-align:center;">নোট: এই প্যাকেজটি শুধু আপনার জন্যই </p>
+    </section>
+  </main>
+
+  <div class="copy-notification" id="copyNotification">নম্বর কপি হয়েছে!</div>
+
+  <script>
+    const packages = [
+      { name: "৩ মাসের প্যাকেজ", price: 849 },
+      { name: "৬ মাসের প্যাকেজ", price: 1260 },
+      { name: "১ বছরের প্যাকেজ", price: 1569 }
+    ];
+
+    const paymentInfo = {
+      bkash: {
+        name: "বিকাশ",
+        number: "01580987778",
+        instruction: "বিকাশ পার্সোনাল নম্বরে সেন্ড মানি করুন"
+      },
+      nagad: {
+        name: "নগদ",
+        number: "01614175872",
+        instruction: "নগদ পার্সোনাল নম্বরে সেন্ড মানি করুন"
+      }
+    };
+
+    let selectedPackage = null;
+    let selectedPaymentMethod = null;
+    let copyTimer = null;
+
+    function selectPackage(index) {
+      selectedPackage = packages[index];
+      document.querySelectorAll(".package-card").forEach((card, i) => {
+        card.classList.toggle("selected", i === index);
+      });
+      document.getElementById("packageName").textContent = selectedPackage.name;
+      document.getElementById("packagePrice").textContent = "৳" + selectedPackage.price.toLocaleString("bn-BD");
+      document.getElementById("orderSection").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function selectPaymentMethod(method) {
+      selectedPaymentMethod = method;
+      document.getElementById("bkashOption").classList.toggle("selected", method === "bkash");
+      document.getElementById("nagadOption").classList.toggle("selected", method === "nagad");
+      
+      const info = paymentInfo[method];
+      document.getElementById("payInstruction").textContent = info.instruction;
+      document.getElementById("currentPayNumber").textContent = info.number;
+      
+      const detailsBox = document.getElementById("paymentDetailsBox");
+      detailsBox.classList.add("show");
+    }
+
+    async function copyCurrentNumber(event) {
+      if (event) event.stopPropagation();
+      if (!selectedPaymentMethod) return;
+      const number = paymentInfo[selectedPaymentMethod].number;
+      try {
+        await navigator.clipboard.writeText(number);
+      } catch (e) {
+        const temp = document.createElement("textarea");
+        temp.value = number;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        temp.remove();
+      }
+      const notification = document.getElementById("copyNotification");
+      notification.classList.add("show");
+      clearTimeout(copyTimer);
+      copyTimer = setTimeout(() => notification.classList.remove("show"), 1800);
+    }
+
+    function submitOrder() {
+      const phone = document.getElementById("phoneNumber").value.trim();
+      const transactionId = document.getElementById("transactionId").value.trim();
+      const success = document.getElementById("successMessage");
+      success.classList.remove("show");
+
+      if (!selectedPackage) {
+        alert("আগে একটি প্যাকেজ নির্বাচন করুন।");
+        return;
+      }
+      if (!selectedPaymentMethod) {
+        alert("পেমেন্ট পদ্ধতি নির্বাচন করুন (বিকাশ বা নগদ)।");
+        return;
+      }
+      if (!transactionId) {
+        alert("আপনার Transaction ID লিখুন।");
+        document.getElementById("transactionId").focus();
+        return;
+      }
+
+      const methodName = paymentInfo[selectedPaymentMethod].name;
+      success.innerHTML =
+        "<strong>অর্ডারের তথ্য প্রস্তুত হয়েছে!</strong><br>" +
+        "প্যাকেজ: " + selectedPackage.name + "<br>" +
+        "মূল্য: ৳" + selectedPackage.price.toLocaleString("bn-BD") + "<br>" +
+        "রবি নম্বর: " + phone + "<br>" +
+        "পেমেন্ট মাধ্যম: " + methodName + "<br>" +
+        "Transaction ID: " + transactionId +
+        "<br><br>মনে রাখবেন: অফারটি শুধু আপনার জন্যই।";
+      success.classList.add("show");
+      success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  </script>
+</body>
+</html>
+
